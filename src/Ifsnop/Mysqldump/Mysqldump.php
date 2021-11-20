@@ -114,6 +114,7 @@ class Mysqldump
      */
     private $tableWheres = array();
     private $tableLimits = array();
+    private $tableOrder = array();
 
 
     /**
@@ -274,6 +275,31 @@ class Mysqldump
         }
 
         return $limit;
+    }
+
+    /**
+     * Keyed by table name, with the value as the order instruction:
+     * e.g. 'users' => 'created_at DESC'
+     *
+     * @param array $tableOrder
+     */
+    public function setTableOrder(array $tableOrder)
+    {
+        $this->tableOrder = $tableOrder;
+    }
+
+    /**
+     * Returns the ORDER for the table.
+     * @param $tableName
+     * @return boolean|string
+     */
+    public function getTableOrder($tableName)
+    {
+        if (!isset($this->tableOrder[$tableName])) {
+            return false;
+        }
+
+        return $this->tableOrder[$tableName];
     }
 
     /**
@@ -1112,6 +1138,11 @@ class Mysqldump
 
         if ($limit !== false) {
             $stmt .= " LIMIT {$limit}";
+        }
+
+        $order = $this->getTableOrder($tableName);
+        if ($order !== false) {
+            $stmt .= " ORDER BY {$order}";
         }
 
         $resultSet = $this->dbHandler->query($stmt);
