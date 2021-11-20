@@ -166,6 +166,7 @@ class Mysqldump
             'skip-comments' => false,
             'skip-dump-date' => false,
             'skip-definer' => false,
+            'use-backup-parameters' => true,
             'where' => '',
             /* deprecated */
             'disable-foreign-keys-check' => true
@@ -419,9 +420,11 @@ class Mysqldump
         $this->compressManager->write($this->getDumpFileHeader());
 
         // Store server settings and use sanner defaults to dump
-        $this->compressManager->write(
-            $this->typeAdapter->backup_parameters()
-        );
+        if (true === $this->dumpSettings['use-backup-parameters']) {
+            $this->compressManager->write(
+                $this->typeAdapter->backup_parameters()
+            );
+        }
 
         if ($this->dumpSettings['databases']) {
             $this->compressManager->write(
@@ -466,9 +469,12 @@ class Mysqldump
         $this->exportEvents();
 
         // Restore saved parameters.
-        $this->compressManager->write(
-            $this->typeAdapter->restore_parameters()
-        );
+        if (true === $this->dumpSettings['use-backup-parameters']) {
+            $this->compressManager->write(
+                $this->typeAdapter->restore_parameters()
+            );
+        }
+
         // Write some stats to output file.
         $this->compressManager->write($this->getDumpFileFooter());
         // Close output file.
