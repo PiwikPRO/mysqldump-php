@@ -266,16 +266,7 @@ class Mysqldump
      */
     public function getTableLimit($tableName)
     {
-        if (!isset($this->tableLimits[$tableName])) {
-            return false;
-        }
-
-        $limit = $this->tableLimits[$tableName];
-        if (!is_numeric($limit)) {
-            return false;
-        }
-
-        return $limit;
+        return isset($this->tableLimits[$tableName]) ? $this->tableLimits[$tableName] : false;
     }
 
     /**
@@ -1140,15 +1131,14 @@ class Mysqldump
             $stmt .= " WHERE {$condition}";
         }
 
-        $limit = $this->getTableLimit($tableName);
-
-        if ($limit !== false) {
-            $stmt .= " LIMIT {$limit}";
-        }
-
         $order = $this->getTableOrder($tableName);
         if ($order !== false) {
             $stmt .= " ORDER BY {$order}";
+        }
+
+        $limit = $this->getTableLimit($tableName);
+        if ($limit !== false) {
+            $stmt .= " LIMIT {$limit}";
         }
 
         $resultSet = $this->dbHandler->query($stmt);

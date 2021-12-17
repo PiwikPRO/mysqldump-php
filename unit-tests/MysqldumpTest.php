@@ -37,12 +37,12 @@ class MysqldumpTest extends PHPUnit_Framework_TestCase
         $dump->setTableLimits(array(
             'users' => 200,
             'logs' => 500,
-            'table_with_invalid_limit' => '41923, 42992'
+            'table_with_offset' => '41923, 42992'
         ));
 
         $this->assertEquals(200, $dump->getTableLimit('users'));
         $this->assertEquals(500, $dump->getTableLimit('logs'));
-        $this->assertFalse($dump->getTableLimit('table_with_invalid_limit'));
+        $this->assertEquals('41923, 42992', $dump->getTableLimit('table_with_offset'));
         $this->assertFalse($dump->getTableLimit('table_name_with_no_limit'));
     }
 }
